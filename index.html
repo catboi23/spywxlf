@@ -69,6 +69,8 @@
       width: 100%;
       max-width: 900px;
       z-index: 1;
+      overflow: visible;
+
       position: relative;
       padding-top: 2.25em;
     }
@@ -78,21 +80,36 @@
       top: -0.45em;
       left: 50%;
       transform: translateX(-50%);
+      width: max-content;
+      max-width: calc(100% - 24px);
+      text-align: center;
+
       display: none;
-      font-family: "Trebuchet MS", "Verdana", system-ui;
+
+      font-family: "Trebuchet MS", "Verdana", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
       font-weight: 700;
       font-size: clamp(0.95rem, 3.6vw, 1.15rem);
+
       color: var(--typed-color, rgba(0, 0, 0, 0.45));
+      letter-spacing: 0.01em;
+      user-select: none;
+      white-space: pre;
       mix-blend-mode: multiply;
       opacity: 0.82;
       pointer-events: none;
-      white-space: pre;
+
+      -webkit-font-smoothing: antialiased;
+      text-rendering: geometricPrecision;
     }
 
     .cursor {
+      display: inline-block;
+      width: 0.55ch;
+      margin-left: 0.12ch;
+      transform: translateY(1px);
       animation: cursorBlink 0.85s steps(1, end) infinite;
+      color: inherit;
       font-weight: 800;
-      margin-left: 0.1ch;
     }
 
     @keyframes cursorBlink {
@@ -105,15 +122,18 @@
     }
 
     @keyframes flickerOnce {
-      0% { opacity: 0.82; }
-      45% { opacity: 0.05; }
+      0%   { opacity: 0.82; }
+      45%  { opacity: 0.05; }
       100% { opacity: 0; }
     }
 
     .symbol {
       font-size: clamp(2.8rem, 7vw, 4.2rem);
-      font-family: Consolas, monospace;
+      font-family: "Consolas", "Courier New", monospace;
       transform: scaleX(1.25);
+      user-select: none;
+      line-height: 1;
+
       text-shadow:
         0 0 6px rgba(126, 200, 255, 0.8),
         -3px 0 4px rgba(0, 255, 255, 0.4),
@@ -123,17 +143,27 @@
     #countup {
       font-size: clamp(1.6rem, 6vw, 3rem);
       letter-spacing: 0.05em;
+      white-space: nowrap;
+
       text-shadow:
         0 0 6px rgba(126, 200, 255, 0.8),
         -2px 0 4px rgba(0, 255, 255, 0.4),
         2px 0 4px rgba(0, 150, 255, 0.4);
     }
 
+    /* CHANGED AFTER V1: lower + harder to see */
     .back-arrow {
       margin-top: 26px;
-      font-size: clamp(1.15rem, 4.2vw, 1.55rem);
+      font-size: clamp(1.2rem, 4.5vw, 1.6rem);
       color: #4b4b4b;
       text-decoration: none;
+      padding: 8px 14px;
+      transition: color 0.25s ease, transform 0.25s ease;
+    }
+
+    .back-arrow:hover {
+      color: #6a6a6a;
+      transform: translateX(-3px);
     }
 
     @keyframes flicker {
@@ -142,131 +172,325 @@
       50% { opacity: 0.15; }
       70% { opacity: 0.5; }
     }
+
+    body.meltdown::before {
+      opacity: 0.9;
+      animation: meltdownFlicker 0.12s infinite;
+      filter: contrast(1.4) saturate(1.6);
+    }
+
+    body.meltdown::after {
+      opacity: 0.65;
+      animation: tearShift 0.12s infinite steps(2, end);
+      filter: contrast(1.5);
+      mix-blend-mode: hard-light;
+    }
+
+    body.meltdown .symbol,
+    body.meltdown #countup {
+      animation: textGlitch 0.09s infinite steps(2, end);
+      filter: contrast(1.35) saturate(1.4);
+      text-shadow:
+        0 0 14px rgba(126, 200, 255, 1),
+        -6px 0 3px rgba(0, 255, 255, 0.75),
+        6px 0 3px rgba(0, 150, 255, 0.75),
+        0 4px 2px rgba(0, 0, 0, 0.65);
+    }
+
+    body.meltdown .back-arrow { opacity: 0.15; }
+
+    @keyframes meltdownFlicker {
+      0% { transform: translate(0,0); }
+      25% { transform: translate(-2px, 1px) skewX(-2deg); }
+      50% { transform: translate(3px, -2px) skewX(3deg); }
+      75% { transform: translate(-1px, -3px) skewX(-2deg); }
+      100% { transform: translate(0,0); }
+    }
+
+    @keyframes tearShift {
+      0% { transform: translate(0,0) skewX(0deg); }
+      25% { transform: translate(-10px, -3px) skewX(-6deg); }
+      50% { transform: translate(8px, 2px) skewX(7deg); }
+      75% { transform: translate(-6px, 4px) skewX(-5deg); }
+      100% { transform: translate(0,0) skewX(0deg); }
+    }
+
+    @keyframes textGlitch {
+      0% { transform: translate(0,0); }
+      20% { transform: translate(-3px, 1px); }
+      40% { transform: translate(4px, -2px); }
+      60% { transform: translate(-2px, -3px); }
+      80% { transform: translate(2px, 3px); }
+      100% { transform: translate(0,0); }
+    }
   </style>
 </head>
 
 <body>
-<div class="wrapper">
-  <div class="typed-line" id="typedLine">
-    <span id="typedText"></span><span class="cursor">|</span>
+  <div class="wrapper">
+    <div class="typed-line" id="typedLine">
+      <span id="typedText"></span><span class="cursor" id="typedCursor">|</span>
+    </div>
+
+    <div class="symbol" id="hourglass">⧖</div>
+    <div id="countup">Loading...</div>
+    <a href="https://www.hyperfollow.com/spywxlf" class="back-arrow">←</a>
   </div>
 
-  <div class="symbol">⧖</div>
-  <div id="countup">Loading…</div>
-  <a href="https://www.hyperfollow.com/spywxlf" class="back-arrow">←</a>
-</div>
+  <script>
+    /* ===== Typed message (V1 base + post-V1 features) ===== */
+    (function initTypedMessage() {
+      const line = document.getElementById("typedLine");
+      const textEl = document.getElementById("typedText");
+      const cursorEl = document.getElementById("typedCursor");
 
-<script>
-/* ===== Typed message system ===== */
-(function(){
-  const line = document.getElementById("typedLine");
-  const textEl = document.getElementById("typedText");
+      // V1 chances on load
+      const ITSME_CHANCE = 1 / 83;
+      const NORMAL_CHANCE = 1 / 3;
 
-  const messages = [
-    " When Will It End ?",
-    "Soon ?",
-    "Runn.ing 0ut 0f Ti.me",
-    "Trying To Fix ∆ Broken Time-line",
-    "It Will ∆LL M∆ke Sense One D∆Y",
-    "*D∆¥SB3F0R3D¥1N9*"
-  ];
+      // Post-V1: retry chance if nothing spawned on load
+      const RETRY_INTERVAL_MS = 1000; // every second
+      const RETRY_CHANCE = 0.03;      // 3% per second
+      let retryTimer = null;
+      let spawnedOnce = false;
 
-  const ITSME_CHANCE = 1/83;
-  const ONLOAD_CHANCE = 1/3;
+      const messages = [
+        " When Will It End ?",
+        "Soon ?",
+        "Runn.ing 0ut 0f Ti.me",
+        "Trying To Fix ∆ Broken Time-line",
+        "It Will ∆LL M∆ke Sense One D∆Y",
+        "*D∆¥SB3F0R3D¥1N9*",
+        "[//23:songs.finalization=timer_stop]" // Post-V1: added
+      ];
 
-  const RETRY_INTERVAL = 1000;
-  const RETRY_CHANCE = 0.03; // ← 3% per second
+      const TYPO_CHANCE = 0.12;
+      const MORPH_SPEED_MS = 28;
+      const POST_TYPE_PAUSE_MS = 420;
 
-  const TYPO_CHANCE = 0.12;
+      function rand(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+      }
 
-  let spawned = false;
-  let retryTimer;
+      function randomWrongChar(correct) {
+        const pool = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789∆*?.";
+        let ch = pool[rand(0, pool.length - 1)];
+        if (ch === correct) ch = pool[rand(0, pool.length - 1)];
+        return ch;
+      }
 
-  function randomWrongChar() {
-    const pool = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789∆*?.";
-    return pool[Math.floor(Math.random() * pool.length)];
-  }
+      function nextDelay(char) {
+        let d = 240 + Math.random() * 220;
+        if (char === " ") d += 170;
+        if (char === "." || char === "?" || char === "*") d += 330;
+        return d;
+      }
 
-  function startTyping(text, isItsMe) {
-    spawned = true;
-    clearInterval(retryTimer);
+      function startTyping(picked, spawnItsMe) {
+        if (spawnedOnce) return;
+        spawnedOnce = true;
 
-    line.style.display = "block";
-    textEl.textContent = "";
-    if (isItsMe) line.style.setProperty("--typed-color", "rgba(255,200,60,.78)");
+        if (retryTimer) {
+          clearInterval(retryTimer);
+          retryTimer = null;
+        }
 
-    let i = 0;
+        // Gold-ish yellow only for "it's me"
+        if (spawnItsMe) {
+          line.style.setProperty("--typed-color", "rgba(255, 200, 60, 0.78)");
+        } else {
+          line.style.removeProperty("--typed-color");
+        }
 
-    function typeNext() {
-      const ch = text[i];
+        // Reset display (keeps V1 look/behavior)
+        line.classList.remove("flicker-once");
+        line.style.display = "block";
+        textEl.textContent = "";
+        cursorEl.style.animation = "";
+        cursorEl.style.opacity = "";
 
-      if (!isItsMe && ch !== " " && Math.random() < TYPO_CHANCE) {
-        textEl.textContent += randomWrongChar();
-        setTimeout(() => {
-          textEl.textContent = textEl.textContent.slice(0, -1);
+        let i = 0;
+
+        function typeCorrectChar() {
+          const ch = picked.charAt(i);
           textEl.textContent += ch;
           i++;
-          proceed();
-        }, 240);
-      } else {
-        textEl.textContent += ch;
-        i++;
-        proceed();
-      }
-    }
 
-    function proceed() {
-      if (i < text.length) {
-        setTimeout(typeNext, 260 + Math.random() * 200);
-      } else {
-        morph();
-      }
-    }
-
-    function morph() {
-      const chars = textEl.textContent.split("");
-      let k = 0;
-      const m = setInterval(() => {
-        chars[k++] = "⧖";
-        textEl.textContent = chars.join("");
-        if (k >= chars.length) {
-          clearInterval(m);
-          line.classList.add("flicker-once");
+          if (i >= picked.length) {
+            finishSequence();
+            return;
+          }
+          setTimeout(typeNext, nextDelay(picked.charAt(i)));
         }
-      }, 28);
+
+        function typeWithTypo() {
+          const correct = picked.charAt(i);
+          const wrong = randomWrongChar(correct);
+
+          textEl.textContent += wrong;
+
+          setTimeout(() => {
+            textEl.textContent = textEl.textContent.slice(0, -1);
+            setTimeout(() => {
+              typeCorrectChar();
+            }, 160 + Math.random() * 120);
+          }, 200 + Math.random() * 160);
+        }
+
+        function typeNext() {
+          const ch = picked.charAt(i);
+          const canTypo =
+            !spawnItsMe &&                 // "it's me" ignores typos
+            ch !== " " && ch !== "\n" && ch !== "’";
+
+          if (canTypo && Math.random() < TYPO_CHANCE) {
+            typeWithTypo();
+            return;
+          }
+          typeCorrectChar();
+        }
+
+        function morphToHourglassesThenVanish() {
+          cursorEl.style.animation = "none";
+          cursorEl.style.opacity = "0";
+
+          const original = textEl.textContent;
+          const chars = original.split("");
+          let k = 0;
+
+          const morph = setInterval(() => {
+            if (k >= chars.length) {
+              clearInterval(morph);
+              line.classList.add("flicker-once");
+              setTimeout(() => { line.style.display = "none"; }, 260);
+              return;
+            }
+            chars[k] = "⧖";
+            textEl.textContent = chars.join("");
+            k++;
+          }, MORPH_SPEED_MS);
+        }
+
+        function finishSequence() {
+          setTimeout(morphToHourglassesThenVanish, POST_TYPE_PAUSE_MS);
+        }
+
+        setTimeout(typeNext, 450);
+      }
+
+      // ===== V1 spawn on load =====
+      const spawnItsMe = Math.random() < ITSME_CHANCE;
+      const spawnNormal = !spawnItsMe && (Math.random() < NORMAL_CHANCE);
+
+      if (spawnItsMe) {
+        startTyping("it's me", true);
+        return;
+      }
+
+      if (spawnNormal) {
+        startTyping(messages[Math.floor(Math.random() * messages.length)], false);
+        return;
+      }
+
+      // ===== Post-V1: retry until it spawns once (normal phrases ONLY) =====
+      retryTimer = setInterval(() => {
+        if (spawnedOnce) return;
+        if (Math.random() < RETRY_CHANCE) {
+          startTyping(messages[Math.floor(Math.random() * messages.length)], false);
+        }
+      }, RETRY_INTERVAL_MS);
+    })();
+
+    /* ===== Timer + meltdown logic (V1 unchanged) ===== */
+    const startTime = new Date("2023-03-27T22:53:00Z");
+    const el = document.getElementById("countup");
+
+    const CHECK_EVERY_MS = 10_000;
+    const MELTDOWN_CHANCE = 0.20; // 1 in 5
+    const MELTDOWN_MIN_MS = 2500;
+    const MELTDOWN_MAX_MS = 4200;
+
+    let inMeltdown = false;
+    let normalInterval, meltdownInterval, meltdownTimeout;
+
+    function addYearsUTC(d, y) {
+      const n = new Date(d);
+      n.setUTCFullYear(n.getUTCFullYear() + y);
+      return n;
     }
 
-    typeNext();
-  }
-
-  if (Math.random() < ITSME_CHANCE) {
-    startTyping("it's me", true);
-    return;
-  }
-
-  if (Math.random() < ONLOAD_CHANCE) {
-    startTyping(messages[Math.floor(Math.random() * messages.length)], false);
-    return;
-  }
-
-  retryTimer = setInterval(() => {
-    if (!spawned && Math.random() < RETRY_CHANCE) {
-      startTyping(messages[Math.floor(Math.random() * messages.length)], false);
+    function fullYearsElapsed(start, now) {
+      let years = now.getUTCFullYear() - start.getUTCFullYear();
+      if (years < 0) years = 0;
+      let anchor = addYearsUTC(start, years);
+      while (anchor > now) anchor = addYearsUTC(start, --years);
+      while (addYearsUTC(anchor, 1) <= now) {
+        anchor = addYearsUTC(anchor, 1);
+        years++;
+      }
+      return { years, anchor };
     }
-  }, RETRY_INTERVAL);
-})();
 
-/* ===== Timer ===== */
-const start = new Date("2023-03-27T22:53:00Z");
-const el = document.getElementById("countup");
+    function render(ms) {
+      const s = Math.floor(ms / 1000);
+      return {
+        seconds: s % 60,
+        minutes: Math.floor(s / 60) % 60,
+        hours: Math.floor(s / 3600) % 24,
+        days: Math.floor(s / 86400)
+      };
+    }
 
-function tick() {
-  const s = Math.floor((Date.now() - start) / 1000);
-  el.textContent =
-    `${Math.floor(s/31536000)}:${Math.floor(s/86400)%365}:${String(Math.floor(s/3600)%24).padStart(2,"0")}:${String(Math.floor(s/60)%60).padStart(2,"0")}:${String(s%60).padStart(2,"0")}`;
-}
-setInterval(tick, 1000);
-tick();
-</script>
+    function updateNormal() {
+      const now = new Date();
+      const { years, anchor } = fullYearsElapsed(startTime, now);
+      const r = render(now - anchor);
+      el.textContent =
+        `${years}:${r.days}:${String(r.hours).padStart(2,"0")}:${String(r.minutes).padStart(2,"0")}:${String(r.seconds).padStart(2,"0")}`;
+    }
+
+    function rand(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function updateMeltdown() {
+      const now = new Date();
+      const { years, anchor } = fullYearsElapsed(startTime, now);
+      const fake = now - anchor + rand(-216000000, 216000000) + rand(-9000, 9000);
+      const r = render(fake);
+      el.textContent =
+        `${Math.max(0, years + rand(-1,1))}:${r.days}:${String(r.hours).padStart(2,"0")}:${String(r.minutes).padStart(2,"0")}:${String(r.seconds).padStart(2,"0")}`;
+    }
+
+    function startMeltdown() {
+      if (inMeltdown) return;
+      inMeltdown = true;
+
+      document.body.classList.add("meltdown");
+      clearInterval(normalInterval);
+
+      meltdownInterval = setInterval(updateMeltdown, 45);
+      meltdownTimeout = setTimeout(stopMeltdown, rand(MELTDOWN_MIN_MS, MELTDOWN_MAX_MS));
+    }
+
+    function stopMeltdown() {
+      if (!inMeltdown) return;
+      inMeltdown = false;
+
+      document.body.classList.remove("meltdown");
+      clearInterval(meltdownInterval);
+      clearTimeout(meltdownTimeout);
+
+      updateNormal();
+      normalInterval = setInterval(updateNormal, 1000);
+    }
+
+    setInterval(() => {
+      if (!inMeltdown && Math.random() < MELTDOWN_CHANCE) startMeltdown();
+    }, CHECK_EVERY_MS);
+
+    updateNormal();
+    normalInterval = setInterval(updateNormal, 1000);
+  </script>
 </body>
 </html>
