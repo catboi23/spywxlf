@@ -19,24 +19,6 @@
       position: relative;
     }
 
-    /* ← BACK ARROW */
-    .back-arrow {
-      position: absolute;
-      top: 16px;
-      left: 16px;
-      font-size: 1.4rem;
-      color: #9ca3af; /* soft grey */
-      text-decoration: none;
-      opacity: 0.6;
-      transition: opacity 0.2s ease, transform 0.2s ease;
-      z-index: 10;
-    }
-
-    .back-arrow:hover {
-      opacity: 1;
-      transform: translateX(-3px);
-    }
-
     /* Scan-line flicker */
     body::before {
       content: "";
@@ -81,11 +63,14 @@
       text-align: center;
       font-size: 3rem;
       z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
     }
 
     .symbol {
       font-size: 4.2rem;
-      margin-bottom: 0.4rem;
       font-family: "Consolas", "Courier New", monospace;
       transform: scaleX(1.25);
       text-shadow:
@@ -103,6 +88,20 @@
       white-space: nowrap;
     }
 
+    /* CENTERED ARROW */
+    .back-arrow {
+      margin-top: 6px;
+      font-size: 1.8rem;
+      color: #8a8a8a;
+      text-decoration: none;
+      transition: color 0.2s ease, transform 0.2s ease;
+    }
+
+    .back-arrow:hover {
+      color: #bdbdbd;
+      transform: translateX(-4px);
+    }
+
     @keyframes flicker {
       0%, 19%, 21%, 64%, 100% { opacity: 0.35; }
       20%, 22%, 63% { opacity: 0.65; }
@@ -113,29 +112,35 @@
 </head>
 
 <body>
-  <!-- BACK ARROW -->
-  <a class="back-arrow" href="https://www.hyperfollow.com/spywxlf" aria-label="Back">
-    ←
-  </a>
-
   <div class="wrapper">
     <div class="symbol">⧖</div>
     <div id="countup">Loading...</div>
+
+    <!-- Centered arrow link -->
+    <a
+      href="https://www.hyperfollow.com/spywxlf"
+      class="back-arrow"
+      aria-label="Go to Hyperfollow"
+    >
+      ←
+    </a>
   </div>
 
   <script>
-    // Start: March 27, 2023, 12:00 AM America/New_York
-    // That date is EDT (UTC-4) → 2023-03-27T04:00:00Z
+    /**
+     * Counts upward from March 27, 2023 (midnight America/New_York).
+     * March 27, 2023 is in EDT (UTC-4), so midnight NY = 2023-03-27T04:00:00Z.
+     */
     const startTime = new Date("2023-03-27T04:00:00Z");
     const el = document.getElementById("countup");
 
-    function addYearsUTC(date, years) {
+    function addYearsUTC(date, yearsToAdd) {
       const d = new Date(date.getTime());
-      d.setUTCFullYear(d.getUTCFullYear() + years);
+      d.setUTCFullYear(d.getUTCFullYear() + yearsToAdd);
       return d;
     }
 
-    function fullYearsElapsed(start, now) {
+    function fullYearsElapsedUTC(start, now) {
       let years = 0;
       let anchor = new Date(start.getTime());
 
@@ -158,10 +163,10 @@
         return;
       }
 
-      const { years, anchor } = fullYearsElapsed(startTime, now);
-      const diffMs = now - anchor;
+      const { years, anchor } = fullYearsElapsedUTC(startTime, now);
+      const remainingMs = now - anchor;
 
-      const totalSeconds = Math.floor(diffMs / 1000);
+      const totalSeconds = Math.floor(remainingMs / 1000);
       const seconds = totalSeconds % 60;
       const totalMinutes = Math.floor(totalSeconds / 60);
       const minutes = totalMinutes % 60;
@@ -170,9 +175,7 @@
       const days = Math.floor(totalHours / 24);
 
       el.textContent =
-        `${years}:${days}:${String(hours).padStart(2, "0")}:` +
-        `${String(minutes).padStart(2, "0")}:` +
-        `${String(seconds).padStart(2, "0")}`;
+        `${years}:${days}:${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
     }
 
     update();
