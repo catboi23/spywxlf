@@ -28,13 +28,13 @@
       inset: -60px;
       background: repeating-linear-gradient(
         to bottom,
-        rgba(126,200,255,0.08) 0px,
-        rgba(126,200,255,0.08) 1px,
+        rgba(126, 200, 255, 0.08) 0px,
+        rgba(126, 200, 255, 0.08) 1px,
         transparent 2px,
         transparent 3px
       );
       mix-blend-mode: screen;
-      opacity: .4;
+      opacity: 0.4;
       pointer-events: none;
       animation: flicker 2.5s infinite;
     }
@@ -45,249 +45,414 @@
       inset: -60px;
       background: linear-gradient(
         to right,
-        rgba(0,0,0,0) 0%,
-        rgba(0,0,0,.7) 10%,
-        rgba(0,0,0,0) 20%,
-        rgba(0,0,0,.7) 30%,
-        rgba(0,0,0,0) 40%,
-        rgba(0,0,0,.7) 55%,
-        rgba(0,0,0,0) 65%,
-        rgba(0,0,0,.7) 75%,
-        rgba(0,0,0,0) 100%
+        rgba(0, 0, 0, 0) 0%,
+        rgba(0, 0, 0, 0.7) 10%,
+        rgba(0, 0, 0, 0) 20%,
+        rgba(0, 0, 0, 0.7) 30%,
+        rgba(0, 0, 0, 0) 40%,
+        rgba(0, 0, 0, 0.7) 55%,
+        rgba(0, 0, 0, 0) 65%,
+        rgba(0, 0, 0, 0.7) 75%,
+        rgba(0, 0, 0, 0) 100%
       );
       mix-blend-mode: multiply;
-      opacity: .25;
+      opacity: 0.25;
       pointer-events: none;
     }
 
     .wrapper {
-      position: relative;
       text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      max-width: 900px;
+      z-index: 1;
+      overflow: visible;
+
+      position: relative;
       padding-top: 2.25em;
     }
 
-    /* ===== Typed message ===== */
     .typed-line {
       position: absolute;
       top: -0.45em;
       left: 50%;
       transform: translateX(-50%);
+      width: max-content;
+      max-width: calc(100% - 24px);
+      text-align: center;
+
       display: none;
-      font-family: "Trebuchet MS","Verdana",sans-serif;
+
+      font-family: "Trebuchet MS", "Verdana", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
       font-weight: 700;
-      font-size: clamp(.95rem,3.6vw,1.15rem);
-      color: var(--typed-color, rgba(0,0,0,.45));
-      mix-blend-mode: multiply;
-      opacity: .82;
+      font-size: clamp(0.95rem, 3.6vw, 1.15rem);
+
+      color: var(--typed-color, rgba(0, 0, 0, 0.45));
+      letter-spacing: 0.01em;
+      user-select: none;
       white-space: pre;
+      mix-blend-mode: multiply;
+      opacity: 0.82;
       pointer-events: none;
+
+      -webkit-font-smoothing: antialiased;
+      text-rendering: geometricPrecision;
     }
 
     .cursor {
-      margin-left: .15ch;
-      animation: blink .85s steps(1,end) infinite;
+      display: inline-block;
+      width: 0.55ch;
+      margin-left: 0.12ch;
+      transform: translateY(1px);
+      animation: cursorBlink 0.85s steps(1, end) infinite;
+      color: inherit;
       font-weight: 800;
     }
 
-    @keyframes blink {
-      0%,49%{opacity:1}
-      50%,100%{opacity:0}
+    @keyframes cursorBlink {
+      0%, 49% { opacity: 1; }
+      50%, 100% { opacity: 0; }
     }
 
     .typed-line.flicker-once {
-      animation: flickerOnce .22s steps(1,end) forwards;
+      animation: flickerOnce 0.22s steps(1, end) forwards;
     }
 
     @keyframes flickerOnce {
-      0%{opacity:.82}
-      45%{opacity:.05}
-      100%{opacity:0}
+      0%   { opacity: 0.82; }
+      45%  { opacity: 0.05; }
+      100% { opacity: 0; }
     }
 
     .symbol {
-      font-size: clamp(2.8rem,7vw,4.2rem);
-      font-family: Consolas,monospace;
+      font-size: clamp(2.8rem, 7vw, 4.2rem);
+      font-family: "Consolas", "Courier New", monospace;
       transform: scaleX(1.25);
-      cursor: pointer;
       user-select: none;
+      line-height: 1;
+
       text-shadow:
-        0 0 6px rgba(126,200,255,.8),
-        -3px 0 4px rgba(0,255,255,.4),
-        3px 0 4px rgba(0,150,255,.4);
+        0 0 6px rgba(126, 200, 255, 0.8),
+        -3px 0 4px rgba(0, 255, 255, 0.4),
+        3px 0 4px rgba(0, 150, 255, 0.4);
     }
 
     #countup {
-      font-size: clamp(1.6rem,6vw,3rem);
-      letter-spacing: .05em;
+      font-size: clamp(1.6rem, 6vw, 3rem);
+      letter-spacing: 0.05em;
       white-space: nowrap;
+
       text-shadow:
-        0 0 6px rgba(126,200,255,.8),
-        -2px 0 4px rgba(0,255,255,.4),
-        2px 0 4px rgba(0,150,255,.4);
+        0 0 6px rgba(126, 200, 255, 0.8),
+        -2px 0 4px rgba(0, 255, 255, 0.4),
+        2px 0 4px rgba(0, 150, 255, 0.4);
     }
 
     .back-arrow {
-      display: inline-block;
       margin-top: 20px;
-      font-size: 1.4rem;
+      font-size: clamp(1.2rem, 4.5vw, 1.6rem);
       color: #5a5a5a;
       text-decoration: none;
+      padding: 8px 14px;
+      transition: color 0.25s ease, transform 0.25s ease;
+    }
+
+    .back-arrow:hover {
+      color: #7a7a7a;
+      transform: translateX(-3px);
     }
 
     @keyframes flicker {
-      0%,19%,21%,64%,100%{opacity:.35}
-      20%,22%,63%{opacity:.65}
-      50%{opacity:.15}
-      70%{opacity:.5}
+      0%, 19%, 21%, 64%, 100% { opacity: 0.35; }
+      20%, 22%, 63% { opacity: 0.65; }
+      50% { opacity: 0.15; }
+      70% { opacity: 0.5; }
     }
 
-    /* ===== Meltdown ===== */
     body.meltdown::before {
-      opacity: .9;
-      animation: meltdownFlicker .12s infinite;
+      opacity: 0.9;
+      animation: meltdownFlicker 0.12s infinite;
+      filter: contrast(1.4) saturate(1.6);
     }
+
     body.meltdown::after {
-      opacity: .65;
-      animation: tearShift .12s infinite steps(2,end);
+      opacity: 0.65;
+      animation: tearShift 0.12s infinite steps(2, end);
+      filter: contrast(1.5);
+      mix-blend-mode: hard-light;
     }
+
     body.meltdown .symbol,
     body.meltdown #countup {
-      animation: textGlitch .09s infinite steps(2,end);
+      animation: textGlitch 0.09s infinite steps(2, end);
+      filter: contrast(1.35) saturate(1.4);
+      text-shadow:
+        0 0 14px rgba(126, 200, 255, 1),
+        -6px 0 3px rgba(0, 255, 255, 0.75),
+        6px 0 3px rgba(0, 150, 255, 0.75),
+        0 4px 2px rgba(0, 0, 0, 0.65);
     }
 
+    body.meltdown .back-arrow { opacity: 0.15; }
+
     @keyframes meltdownFlicker {
-      0%{transform:translate(0,0)}
-      25%{transform:translate(-2px,1px)}
-      50%{transform:translate(3px,-2px)}
-      75%{transform:translate(-1px,-3px)}
-      100%{transform:translate(0,0)}
+      0% { transform: translate(0,0); }
+      25% { transform: translate(-2px, 1px) skewX(-2deg); }
+      50% { transform: translate(3px, -2px) skewX(3deg); }
+      75% { transform: translate(-1px, -3px) skewX(-2deg); }
+      100% { transform: translate(0,0); }
     }
+
     @keyframes tearShift {
-      0%{transform:translate(0,0)}
-      25%{transform:translate(-10px,-3px)}
-      50%{transform:translate(8px,2px)}
-      75%{transform:translate(-6px,4px)}
-      100%{transform:translate(0,0)}
+      0% { transform: translate(0,0) skewX(0deg); }
+      25% { transform: translate(-10px, -3px) skewX(-6deg); }
+      50% { transform: translate(8px, 2px) skewX(7deg); }
+      75% { transform: translate(-6px, 4px) skewX(-5deg); }
+      100% { transform: translate(0,0) skewX(0deg); }
     }
+
     @keyframes textGlitch {
-      0%{transform:translate(0,0)}
-      20%{transform:translate(-3px,1px)}
-      40%{transform:translate(4px,-2px)}
-      60%{transform:translate(-2px,-3px)}
-      80%{transform:translate(2px,3px)}
-      100%{transform:translate(0,0)}
+      0% { transform: translate(0,0); }
+      20% { transform: translate(-3px, 1px); }
+      40% { transform: translate(4px, -2px); }
+      60% { transform: translate(-2px, -3px); }
+      80% { transform: translate(2px, 3px); }
+      100% { transform: translate(0,0); }
     }
   </style>
 </head>
 
 <body>
-<div class="wrapper">
+  <div class="wrapper">
+    <div class="typed-line" id="typedLine">
+      <span id="typedText"></span><span class="cursor" id="typedCursor">|</span>
+    </div>
 
-  <div class="typed-line" id="typedLine">
-    <span id="typedText"></span><span class="cursor">|</span>
+    <div class="symbol" id="hourglass">⧖</div>
+    <div id="countup">Loading...</div>
+    <a href="https://www.hyperfollow.com/spywxlf" class="back-arrow">←</a>
   </div>
 
-  <div class="symbol" id="hourglass">⧖</div>
-  <div id="countup">Loading...</div>
-  <a href="https://www.hyperfollow.com/spywxlf" class="back-arrow">←</a>
+  <script>
+    /* ===== Typed message on load ===== */
+    (function initTypedMessage() {
+      const line = document.getElementById("typedLine");
+      const textEl = document.getElementById("typedText");
+      const cursorEl = document.getElementById("typedCursor");
 
-</div>
+      // Special rare spawn: 1 in 83 overall
+      const ITSME_CHANCE = 1 / 83;
+      const NORMAL_CHANCE = 1 / 3;
 
-<script>
-/* ===== Hourglass redirect (ONLY NEW ADDITION) ===== */
-document.getElementById("hourglass").addEventListener("click", () => {
-  window.location.href = "https://spywxlf.com";
-});
+      const spawnItsMe = Math.random() < ITSME_CHANCE;
+      const spawnNormal = !spawnItsMe && (Math.random() < NORMAL_CHANCE);
 
-/* ===== Typed message logic (unchanged) ===== */
-(function(){
-  const ITSME_CHANCE = 1/83;
-  const NORMAL_CHANCE = 1/3;
+      if (!spawnItsMe && !spawnNormal) return;
 
-  const spawnItsMe = Math.random() < ITSME_CHANCE;
-  const spawnNormal = !spawnItsMe && Math.random() < NORMAL_CHANCE;
-  if (!spawnItsMe && !spawnNormal) return;
+      const messages = [
+        " When Will It End ?",
+        "Soon ?",
+        "Runn.ing 0ut 0f Ti.me",
+        "Trying To Fix ∆ Broken Time-line",
+        "It Will ∆LL M∆ke Sense One D∆Y",
+        "*D∆¥SB3F0R3D¥1N9*"
+      ];
 
-  const messages = [
-    " When Will It End ?",
-    "Soon ?",
-    "Runn.ing 0ut 0f Ti.me",
-    "Trying To Fix ∆ Broken Time-line",
-    "It Will ∆LL M∆ke Sense One D∆Y",
-    "*D∆¥SB3F0R3D¥1N9*"
-  ];
+      const picked = spawnItsMe ? "it's me" : messages[Math.floor(Math.random() * messages.length)];
 
-  const text = spawnItsMe ? "it's me" : messages[Math.floor(Math.random()*messages.length)];
-  const line = document.getElementById("typedLine");
-  const out = document.getElementById("typedText");
+      // Gold-ish yellow only for "it's me"
+      if (spawnItsMe) {
+        line.style.setProperty("--typed-color", "rgba(255, 200, 60, 0.78)");
+      } else {
+        line.style.removeProperty("--typed-color");
+      }
 
-  if (spawnItsMe) {
-    line.style.setProperty("--typed-color","rgba(255,200,60,.78)");
-  }
+      line.style.display = "block";
 
-  line.style.display = "block";
-  let i = 0;
+      const TYPO_CHANCE = 0.12;
+      const MORPH_SPEED_MS = 28;
+      const POST_TYPE_PAUSE_MS = 420;
 
-  function type(){
-    out.textContent += text[i++];
-    if (i < text.length) {
-      setTimeout(type, 300);
-    } else {
-      setTimeout(()=>{
-        let chars = out.textContent.split("");
+      let i = 0;
+
+      function rand(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+      }
+
+      function randomWrongChar(correct) {
+        const pool = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789∆*?.";
+        let ch = pool[rand(0, pool.length - 1)];
+        if (ch === correct) ch = pool[rand(0, pool.length - 1)];
+        return ch;
+      }
+
+      function nextDelay(char) {
+        let d = 240 + Math.random() * 220;
+        if (char === " ") d += 170;
+        if (char === "." || char === "?" || char === "*") d += 330;
+        return d;
+      }
+
+      function typeCorrectChar() {
+        const ch = picked.charAt(i);
+        textEl.textContent += ch;
+        i++;
+
+        if (i >= picked.length) {
+          finishSequence();
+          return;
+        }
+        setTimeout(typeNext, nextDelay(picked.charAt(i)));
+      }
+
+      function typeWithTypo() {
+        const correct = picked.charAt(i);
+        const wrong = randomWrongChar(correct);
+
+        textEl.textContent += wrong;
+
+        setTimeout(() => {
+          textEl.textContent = textEl.textContent.slice(0, -1);
+          setTimeout(() => {
+            typeCorrectChar();
+          }, 160 + Math.random() * 120);
+        }, 200 + Math.random() * 160);
+      }
+
+      function typeNext() {
+        const ch = picked.charAt(i);
+        const canTypo =
+          !spawnItsMe &&                 // <-- IMPORTANT: "it's me" ignores typos
+          ch !== " " && ch !== "\n" && ch !== "’";
+
+        if (canTypo && Math.random() < TYPO_CHANCE) {
+          typeWithTypo();
+          return;
+        }
+        typeCorrectChar();
+      }
+
+      function morphToHourglassesThenVanish() {
+        cursorEl.style.animation = "none";
+        cursorEl.style.opacity = "0";
+
+        const original = textEl.textContent;
+        const chars = original.split("");
         let k = 0;
-        const morph = setInterval(()=>{
+
+        const morph = setInterval(() => {
           if (k >= chars.length) {
             clearInterval(morph);
             line.classList.add("flicker-once");
+            setTimeout(() => { line.style.display = "none"; }, 260);
             return;
           }
-          chars[k++] = "⧖";
-          out.textContent = chars.join("");
-        },28);
-      },420);
+          chars[k] = "⧖";
+          textEl.textContent = chars.join("");
+          k++;
+        }, MORPH_SPEED_MS);
+      }
+
+      function finishSequence() {
+        setTimeout(morphToHourglassesThenVanish, POST_TYPE_PAUSE_MS);
+      }
+
+      setTimeout(typeNext, 450);
+    })();
+
+    /* ===== Timer + meltdown logic ===== */
+    const startTime = new Date("2023-03-27T22:53:00Z");
+    const el = document.getElementById("countup");
+
+    const CHECK_EVERY_MS = 10_000;
+    const MELTDOWN_CHANCE = 0.20; // 1 in 5
+    const MELTDOWN_MIN_MS = 2500;
+    const MELTDOWN_MAX_MS = 4200;
+
+    let inMeltdown = false;
+    let normalInterval, meltdownInterval, meltdownTimeout;
+
+    function addYearsUTC(d, y) {
+      const n = new Date(d);
+      n.setUTCFullYear(n.getUTCFullYear() + y);
+      return n;
     }
-  }
-  setTimeout(type,450);
-})();
 
-/* ===== Timer + meltdown logic (unchanged) ===== */
-const start = new Date("2023-03-27T22:53:00Z");
-const el = document.getElementById("countup");
+    function fullYearsElapsed(start, now) {
+      let years = now.getUTCFullYear() - start.getUTCFullYear();
+      if (years < 0) years = 0;
+      let anchor = addYearsUTC(start, years);
+      while (anchor > now) anchor = addYearsUTC(start, --years);
+      while (addYearsUTC(anchor, 1) <= now) {
+        anchor = addYearsUTC(anchor, 1);
+        years++;
+      }
+      return { years, anchor };
+    }
 
-function addYears(d,y){const n=new Date(d);n.setUTCFullYear(n.getUTCFullYear()+y);return n;}
-function yearsElapsed(a,b){
-  let y=b.getUTCFullYear()-a.getUTCFullYear();
-  let t=addYears(a,y);
-  if(t>b)y--;
-  return {y,base:addYears(a,y)};
-}
-function render(ms){
-  const s=Math.floor(ms/1000);
-  return {
-    s:s%60,
-    m:Math.floor(s/60)%60,
-    h:Math.floor(s/3600)%24,
-    d:Math.floor(s/86400)
-  };
-}
-function tick(){
-  const now=new Date();
-  const {y,base}=yearsElapsed(start,now);
-  const r=render(now-base);
-  el.textContent =
-    `${y}:${r.d}:${String(r.h).padStart(2,"0")}:${String(r.m).padStart(2,"0")}:${String(r.s).padStart(2,"0")}`;
-}
-setInterval(tick,1000);
-tick();
+    function render(ms) {
+      const s = Math.floor(ms / 1000);
+      return {
+        seconds: s % 60,
+        minutes: Math.floor(s / 60) % 60,
+        hours: Math.floor(s / 3600) % 24,
+        days: Math.floor(s / 86400)
+      };
+    }
 
-/* meltdown: every 10s, 1 in 5 */
-setInterval(()=>{
-  if (Math.random() < .2) {
-    document.body.classList.add("meltdown");
-    setTimeout(()=>document.body.classList.remove("meltdown"),3000);
-  }
-},10000);
-</script>
+    function updateNormal() {
+      const now = new Date();
+      const { years, anchor } = fullYearsElapsed(startTime, now);
+      const r = render(now - anchor);
+      el.textContent =
+        `${years}:${r.days}:${String(r.hours).padStart(2,"0")}:${String(r.minutes).padStart(2,"0")}:${String(r.seconds).padStart(2,"0")}`;
+    }
+
+    function rand(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function updateMeltdown() {
+      const now = new Date();
+      const { years, anchor } = fullYearsElapsed(startTime, now);
+      const fake = now - anchor + rand(-216000000, 216000000) + rand(-9000, 9000);
+      const r = render(fake);
+      el.textContent =
+        `${Math.max(0, years + rand(-1,1))}:${r.days}:${String(r.hours).padStart(2,"0")}:${String(r.minutes).padStart(2,"0")}:${String(r.seconds).padStart(2,"0")}`;
+    }
+
+    function startMeltdown() {
+      if (inMeltdown) return;
+      inMeltdown = true;
+
+      document.body.classList.add("meltdown");
+      clearInterval(normalInterval);
+
+      meltdownInterval = setInterval(updateMeltdown, 45);
+      meltdownTimeout = setTimeout(stopMeltdown, rand(MELTDOWN_MIN_MS, MELTDOWN_MAX_MS));
+    }
+
+    function stopMeltdown() {
+      if (!inMeltdown) return;
+      inMeltdown = false;
+
+      document.body.classList.remove("meltdown");
+      clearInterval(meltdownInterval);
+      clearTimeout(meltdownTimeout);
+
+      updateNormal();
+      normalInterval = setInterval(updateNormal, 1000);
+    }
+
+    setInterval(() => {
+      if (!inMeltdown && Math.random() < MELTDOWN_CHANCE) startMeltdown();
+    }, CHECK_EVERY_MS);
+
+    updateNormal();
+    normalInterval = setInterval(updateNormal, 1000);
+  </script>
 </body>
 </html>
