@@ -2,13 +2,15 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Glitch Timer</title>
   <style>
     * { box-sizing: border-box; }
 
     body {
       margin: 0;
-      height: 100vh;
+      min-height: 100vh;   /* fallback */
+      min-height: 100dvh;  /* mobile-safe viewport */
       display: flex;
       justify-content: center;
       align-items: center;
@@ -17,6 +19,7 @@
       color: #7ec8ff;
       overflow: hidden;
       position: relative;
+      padding: 24px; /* breathing room on small screens */
     }
 
     /* Scan-line flicker */
@@ -61,45 +64,60 @@
 
     .wrapper {
       text-align: center;
-      font-size: 3rem;
       z-index: 1;
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 10px;
+      width: 100%;
+      max-width: 900px;
     }
 
     .symbol {
-      font-size: 4.2rem;
+      /* responsive sizing */
+      font-size: clamp(2.8rem, 7vw, 4.2rem);
       font-family: "Consolas", "Courier New", monospace;
       transform: scaleX(1.25);
       text-shadow:
         0 0 6px rgba(126, 200, 255, 0.8),
         -3px 0 4px rgba(0, 255, 255, 0.4),
         3px 0 4px rgba(0, 150, 255, 0.4);
+      line-height: 1;
     }
 
     #countup {
+      /* responsive sizing */
+      font-size: clamp(1.6rem, 6vw, 3rem);
       letter-spacing: 0.05em;
       text-shadow:
         0 0 6px rgba(126, 200, 255, 0.8),
         -2px 0 4px rgba(0, 255, 255, 0.4),
         2px 0 4px rgba(0, 150, 255, 0.4);
       white-space: nowrap;
+      max-width: 100%;
+      overflow: hidden;          /* safety */
+      text-overflow: clip;
     }
 
-    /* CENTERED ARROW */
+    /* Subtle centered arrow */
     .back-arrow {
-      margin-top: 6px;
-      font-size: 1.8rem;
-      color: #8a8a8a;
+      margin-top: 18px;
+      font-size: clamp(1.2rem, 4.5vw, 1.6rem);
+      color: #5f5f5f;            /* close to background */
       text-decoration: none;
-      transition: color 0.2s ease, transform 0.2s ease;
+      transition: color 0.25s ease, transform 0.25s ease;
+      -webkit-tap-highlight-color: transparent;
+      padding: 8px 14px;         /* bigger tap target without being obvious */
+      border-radius: 999px;
     }
 
     .back-arrow:hover {
-      color: #bdbdbd;
-      transform: translateX(-4px);
+      color: #8a8a8a;
+      transform: translateX(-3px);
+    }
+
+    .back-arrow:active {
+      transform: translateX(-2px) scale(0.98);
     }
 
     @keyframes flicker {
@@ -107,6 +125,12 @@
       20%, 22%, 63% { opacity: 0.65; }
       50% { opacity: 0.15; }
       70% { opacity: 0.5; }
+    }
+
+    /* Extra-tight screens: reduce letter spacing a touch */
+    @media (max-width: 360px) {
+      #countup { letter-spacing: 0.03em; }
+      body { padding: 18px; }
     }
   </style>
 </head>
@@ -116,7 +140,6 @@
     <div class="symbol">⧖</div>
     <div id="countup">Loading...</div>
 
-    <!-- Centered arrow link -->
     <a
       href="https://www.hyperfollow.com/spywxlf"
       class="back-arrow"
@@ -128,10 +151,11 @@
 
   <script>
     /**
-     * Counts upward from March 27, 2023 (midnight America/New_York).
-     * March 27, 2023 is in EDT (UTC-4), so midnight NY = 2023-03-27T04:00:00Z.
+     * Counts upward from March 27, 2023 at 6:53 PM EDT.
+     * EDT = UTC-4 → 2023-03-27T22:53:00Z
+     * Leap-year accurate (calendar-year increments).
      */
-    const startTime = new Date("2023-03-27T04:00:00Z");
+    const startTime = new Date("2023-03-27T22:53:00Z");
     const el = document.getElementById("countup");
 
     function addYearsUTC(date, yearsToAdd) {
@@ -158,6 +182,7 @@
 
     function update() {
       const now = new Date();
+
       if (now < startTime) {
         el.textContent = "0:0:00:00:00";
         return;
